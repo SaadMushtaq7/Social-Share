@@ -57,7 +57,9 @@ const VideoRecorder: FC = () => {
 
   const handleStartRecording = () => {
     startRecording();
-    startTimer();
+    if (status === "recording") {
+      startTimer();
+    }
 
     setStartRecorder(true);
   };
