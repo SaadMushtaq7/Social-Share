@@ -1,11 +1,11 @@
-import React from "react";
+import React, { FC } from "react";
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Camera from "./screens/Camera";
 import VideoRecorder from "./screens/VideoRecorder";
 import "./App.css";
 
-export default function App() {
+const App: FC = () => {
   return (
     <div className="App">
       <NavBar />
@@ -15,4 +15,6 @@ export default function App() {
       </Routes>
     </div>
   );
-}
+};
+
+export default App;

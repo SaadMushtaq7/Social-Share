@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, Dispatch, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -7,9 +7,14 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
-import { LinkedinIcon } from "react-share";
-import { LinkedInButton, LinkedInCount } from "react-social";
-import "../App.css";
+import { LinkedinShareButton, LinkedinIcon } from "react-share";
+
+interface Props {
+  fileCheck: boolean;
+  selectedFile: any | null;
+  setFileCheck: Dispatch<React.SetStateAction<boolean>>;
+  videoFile: boolean;
+}
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -20,7 +25,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const BootstrapDialogTitle = (props) => {
+const BootstrapDialogTitle = (props: any) => {
   const { children, onClose, ...other } = props;
 
   return (
@@ -44,19 +49,17 @@ const BootstrapDialogTitle = (props) => {
   );
 };
 
-const CustomizedDialogs = ({
+const CustomizedDialogs: FC<Props> = ({
   fileCheck,
   selectedFile,
   setFileCheck,
   videoFile,
 }) => {
   const [open, setOpen] = useState(fileCheck);
-
   const handleClose = () => {
     setOpen(false);
     setFileCheck(false);
   };
-
   return (
     <div>
       <BootstrapDialog
@@ -101,19 +104,9 @@ const CustomizedDialogs = ({
         </DialogContent>
         <DialogActions>
           <div className="share-btns">
-            <LinkedInButton
-              className="social-btn"
-              url={selectedFile}
-              appId={process.env.REACT_APP_LINKEDIN_APP_ID}
-            >
-              <LinkedinIcon>
-                <LinkedInCount url={selectedFile} />
-              </LinkedinIcon>
-            </LinkedInButton>
-            {/*<HelmetMetaData  />
-            <TwitterShareButton url={selectedFile} hashtags={["postIt"]}>
-              <TwitterIcon lightingColor="white" round={true} />
-            </TwitterShareButton>*/}
+            <LinkedinShareButton url={selectedFile}>
+              <LinkedinIcon size={32} round />
+            </LinkedinShareButton>
           </div>
         </DialogActions>
       </BootstrapDialog>

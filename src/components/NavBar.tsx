@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import "../App.css";
 
-const NavBar = () => {
+const NavBar: FC = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -15,6 +15,7 @@ const NavBar = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Post It!
           </Typography>
+
           <Link style={{ textDecoration: "none", color: "#fff" }} to="/">
             <Button color="inherit">Camera</Button>
           </Link>
