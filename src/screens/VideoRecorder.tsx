@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Webcam from "react-webcam";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -22,6 +22,7 @@ const VideoRecorder: FC = () => {
   const [stopRecorder, setStopRecorder] = useState<boolean>(false);
   const [previewVideo, setPreviewVideo] = useState<boolean>(false);
   const [videoCheck, setVideoCheck] = useState<boolean>(false);
+  const [havePermissions, setHavePermissions] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [uploading, setUploading] = useState<boolean>(false);
@@ -57,9 +58,7 @@ const VideoRecorder: FC = () => {
 
   const handleStartRecording = () => {
     startRecording();
-    if (status === "recording") {
-      startTimer();
-    }
+    startTimer();
 
     setStartRecorder(true);
   };
@@ -122,6 +121,22 @@ const VideoRecorder: FC = () => {
         return "";
     }
   };
+
+  useEffect(() => {
+    const temp = navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+    temp
+      .then(() => {
+        console.log("Permissions given!");
+        setHavePermissions(true);
+      })
+      .catch(() => {
+        console.log("Permissions not given!");
+        setHavePermissions(false);
+      });
+  });
 
   return (
     <div className="app">
@@ -190,6 +205,7 @@ const VideoRecorder: FC = () => {
               <Button
                 className="button-btn"
                 variant="contained"
+                disabled={!havePermissions}
                 onClick={handleStartRecording}
               >
                 Start
