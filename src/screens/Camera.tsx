@@ -44,7 +44,13 @@ const Camera: FC = () => {
       ) : imageClicked ? (
         <>
           <h1>Preview</h1>
-          <img className="camera" alt="clicked" src={imageBlob} />
+          <img
+            className="camera-preview"
+            width={500}
+            height={500}
+            alt="clicked"
+            src={imageBlob}
+          />
           <Button
             className="button-btn"
             variant="contained"
@@ -62,6 +68,7 @@ const Camera: FC = () => {
         </>
       ) : (
         <>
+          <h1>Take Picture</h1>
           <Webcam
             className="camera"
             width={500}

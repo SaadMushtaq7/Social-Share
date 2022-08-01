@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -27,6 +27,8 @@ const VideoRecorder: FC = () => {
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [uploading, setUploading] = useState<boolean>(false);
 
+  const videoRef = useRef() as React.MutableRefObject<Webcam>;
+
   const {
     seconds,
     minutes,
@@ -39,6 +41,9 @@ const VideoRecorder: FC = () => {
     setStopRecorder(true);
     stopTimer();
 
+    let video = videoRef.current.video?.srcObject as MediaStream;
+    video.getTracks()[0].stop();
+
     const videoBlob = await fetch(blobUrl).then((r) => r.blob());
 
     const videoFile = new File([videoBlob], `${v4()}.${"mp4"}`, {
@@ -47,6 +52,8 @@ const VideoRecorder: FC = () => {
 
     setSelectedFile(videoFile);
   };
+
+  //reuseable
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
@@ -136,7 +143,7 @@ const VideoRecorder: FC = () => {
         console.log("Permissions not given!");
         setHavePermissions(false);
       });
-  });
+  }, []);
 
   return (
     <div className="app">
@@ -162,6 +169,7 @@ const VideoRecorder: FC = () => {
                 className="app-video-feed"
                 width={WIDTH}
                 height={HEIGHT}
+                ref={videoRef}
               />
             )}
           </div>

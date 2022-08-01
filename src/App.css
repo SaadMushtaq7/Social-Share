@@ -11,7 +11,7 @@
   }
   
   .App .cam .camera-icon{
-    margin-top: 20px;
+    margin-top: 10px;
     width: 50px;
     height: 50px;
     transition: all 0.3s;
@@ -35,7 +35,7 @@
   .App .cam button,
   .app .app-input .button-btn,
   .app .button-btn{
-    margin-top: 10px;
+    margin-top: 5px;
     text-transform: lowercase;
     display: inline-block;
   }
@@ -54,7 +54,17 @@
   }
   
   .App .cam .camera, .app-container{
+      border-radius: 5px;
+      margin-top: 10px;
+      width: 500px;
+      height: 500px;
+      border: 1px solid #000;
+  }
+  
+  .App .cam .camera-preview {
     border-radius: 5px;
+    padding-top: 40px;
+    padding-bottom: 40px;
     margin-top: 10px;
       width: 500px;
       height: 500px;

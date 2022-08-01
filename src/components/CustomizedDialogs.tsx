@@ -11,7 +11,7 @@ import { LinkedinShareButton, LinkedinIcon } from "react-share";
 
 interface Props {
   fileCheck: boolean;
-  selectedFile: any | null;
+  selectedFile: string;
   setFileCheck: Dispatch<React.SetStateAction<boolean>>;
   videoFile: boolean;
 }

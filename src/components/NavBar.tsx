@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -8,6 +8,7 @@ import Button from "@mui/material/Button";
 import "../App.css";
 
 const NavBar: FC = () => {
+  const [selectedButton, setSelectedButton] = useState<string>("camera");
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -16,14 +17,38 @@ const NavBar: FC = () => {
             Post It!
           </Typography>
 
-          <Link style={{ textDecoration: "none", color: "#fff" }} to="/">
-            <Button color="inherit">Camera</Button>
+          <Link
+            style={{
+              textDecoration: "none",
+              color: "#fff",
+              marginRight: "40px",
+            }}
+            to="/"
+          >
+            <Button
+              variant={selectedButton === "camera" ? "contained" : "text"}
+              color={selectedButton === "camera" ? "primary" : "inherit"}
+              onClick={() => setSelectedButton("camera")}
+            >
+              Camera
+            </Button>
           </Link>
           <Link
-            style={{ textDecoration: "none", color: "#fff" }}
+            style={{
+              textDecoration: "none",
+              color: "#fff",
+              marginRight: "100px",
+              width: "300px",
+            }}
             to="/videoRecorder"
           >
-            <Button color="inherit">Video Recorder</Button>
+            <Button
+              variant={selectedButton === "video" ? "contained" : "text"}
+              color={selectedButton === "video" ? "primary" : "inherit"}
+              onClick={() => setSelectedButton("video")}
+            >
+              Video Recorder
+            </Button>
           </Link>
         </Toolbar>
       </AppBar>
