@@ -237,7 +237,7 @@ const VideoRecorder: FC = () => {
           fileCheck={videoCheck}
           selectedFile={videoUrl}
           setFileCheck={setVideoCheck}
-          videoFile={true}
+          isVideo={true}
         />
       )}
     </div>

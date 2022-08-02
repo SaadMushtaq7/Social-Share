@@ -93,7 +93,7 @@ const Camera: FC = () => {
           fileCheck={photoCheck}
           selectedFile={imageUrl}
           setFileCheck={setPhotoCheck}
-          videoFile={false}
+          isVideo={false}
         />
       )}
     </div>

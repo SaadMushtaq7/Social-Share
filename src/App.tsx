@@ -4,6 +4,7 @@ import NavBar from "./components/NavBar";
 import Camera from "./screens/Camera";
 import VideoRecorder from "./screens/VideoRecorder";
 import "./App.css";
+//import Timer from "./components/Timer";
 
 const App: FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: FC = () => {
         <Route path="/" element={<Camera />} />
         <Route path="/videoRecorder" element={<VideoRecorder />} />
       </Routes>
+      {/*<Timer />*/}
     </div>
   );
 };

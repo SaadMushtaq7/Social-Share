@@ -13,7 +13,7 @@ interface Props {
   fileCheck: boolean;
   selectedFile: string;
   setFileCheck: Dispatch<React.SetStateAction<boolean>>;
-  videoFile: boolean;
+  isVideo: boolean;
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -53,7 +53,7 @@ const CustomizedDialogs: FC<Props> = ({
   fileCheck,
   selectedFile,
   setFileCheck,
-  videoFile,
+  isVideo,
 }) => {
   const [open, setOpen] = useState(fileCheck);
   const handleClose = () => {
@@ -75,7 +75,7 @@ const CustomizedDialogs: FC<Props> = ({
         </BootstrapDialogTitle>
         <DialogContent dividers>
           {selectedFile ? (
-            videoFile ? (
+            isVideo ? (
               <video
                 style={{
                   height: "233px",
