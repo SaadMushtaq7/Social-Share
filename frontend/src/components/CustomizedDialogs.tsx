@@ -8,6 +8,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import { LinkedinShareButton, LinkedinIcon } from "react-share";
+import { BsSlack } from "react-icons/bs";
+import axios from "axios";
 
 interface Props {
   fileCheck: boolean;
@@ -56,10 +58,26 @@ const CustomizedDialogs: FC<Props> = ({
   isVideo,
 }) => {
   const [open, setOpen] = useState(fileCheck);
+
+  const handleSlackShare = async () => {
+    await axios
+      .get("http://localhost:8080/getFile", {
+        params: { imageUrl: selectedFile, isVideo },
+      })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+
+    setOpen(false);
+    setFileCheck(false);
+  };
+
   const handleClose = () => {
     setOpen(false);
     setFileCheck(false);
   };
+
   return (
     <div>
       <BootstrapDialog
@@ -107,6 +125,7 @@ const CustomizedDialogs: FC<Props> = ({
             <LinkedinShareButton url={selectedFile}>
               <LinkedinIcon size={32} round />
             </LinkedinShareButton>
+            <BsSlack onClick={handleSlackShare} className="slack-btn" />
           </div>
         </DialogActions>
       </BootstrapDialog>

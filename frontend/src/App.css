@@ -23,6 +23,19 @@
     height: 60px;
   }
   
+  div.share-btns {
+    display: flex;
+    flex-direction: row;
+  }
+  div.share-btns .slack-btn{
+    height: 30px;
+    color: white;
+    background-color: #007FB1;
+    width: 30px;
+    border-radius: 15px;
+    padding: 5px;
+    margin-left: 5px;
+  }
   div.share-btns .social-btn{
     border: none;
     text-decoration: none;
@@ -63,11 +76,11 @@
   
   .App .cam .camera-preview {
     border-radius: 5px;
-    padding-top: 40px;
-    padding-bottom: 40px;
-    margin-top: 10px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    
       width: 500px;
-      height: 500px;
+      height: 510px;
       border: 1px solid #000;
   }
 

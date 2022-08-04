@@ -25,7 +25,18 @@ const Camera: FC = () => {
     await uploadString(imageRef, imageBlob, "data_url").then(() => {
       console.log("file uploaded to firebase!");
       getDownloadURL(imageRef)
-        .then((url: string) => setImageUrl(url))
+        .then((url: string) => {
+          setImageUrl(url);
+          const xhr = new XMLHttpRequest();
+          xhr.responseType = "blob";
+          xhr.onload = (event) => {
+            const blob = xhr.response;
+            console.log(blob);
+          };
+          console.log(xhr);
+          //xhr.open("GET", url);
+          //xhr.send();
+        })
         .catch(() => {
           console.log("Error uploading file!");
         })
