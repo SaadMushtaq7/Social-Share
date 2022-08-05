@@ -18,16 +18,16 @@ const HEIGHT = 498;
 const WIDTH = 498;
 
 const VideoRecorder: FC = () => {
+  const videoRef = useRef() as React.MutableRefObject<Webcam>;
+
   const [startRecorder, setStartRecorder] = useState<boolean>(false);
   const [stopRecorder, setStopRecorder] = useState<boolean>(false);
-  const [previewVideo, setPreviewVideo] = useState<boolean>(false);
+  const [previewVideo, setPreviewVideo] = useState<boolean>(true);
   const [videoCheck, setVideoCheck] = useState<boolean>(false);
   const [havePermissions, setHavePermissions] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<any>(null);
   const [videoUrl, setVideoUrl] = useState<string>("");
   const [uploading, setUploading] = useState<boolean>(false);
-
-  const videoRef = useRef() as React.MutableRefObject<Webcam>;
 
   const {
     seconds,
@@ -41,9 +41,6 @@ const VideoRecorder: FC = () => {
     setStopRecorder(true);
     stopTimer();
 
-    let video = videoRef.current.video?.srcObject as MediaStream;
-    video.getTracks()[0].stop();
-
     const videoBlob = await fetch(blobUrl).then((r) => r.blob());
 
     const videoFile = new File([videoBlob], `${v4()}.${"mp4"}`, {
@@ -53,17 +50,20 @@ const VideoRecorder: FC = () => {
     setSelectedFile(videoFile);
   };
 
-  //reuseable
-
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
+  const { status, startRecording, stopRecording, mediaBlobUrl, clearBlobUrl } =
     useReactMediaRecorder({
       video: true,
       onStop: (blobUrl) => {
+        let video = videoRef.current.video?.srcObject as MediaStream;
+        //video.getTracks()[0].stop();
+        const tracks = video.getTracks();
+        tracks.forEach((tracks) => tracks.stop());
         handleStopRecording(blobUrl);
       },
     });
 
   const handleStartRecording = () => {
+    setPreviewVideo(false);
     startRecording();
     startTimer();
 
@@ -75,16 +75,21 @@ const VideoRecorder: FC = () => {
     setStopRecorder(false);
     resetTimer(undefined, false);
     setUploading(true);
+    setPreviewVideo(true);
 
-    const videoRef = ref(storage, `videos/${selectedFile.name}`);
+    let video = videoRef.current.video?.srcObject as MediaStream;
 
-    await uploadBytes(videoRef, selectedFile)
+    video.getTracks()[0].stop();
+
+    const videoRefFirebase = ref(storage, `videos/${selectedFile.name}`);
+
+    await uploadBytes(videoRefFirebase, selectedFile)
       .then(() => {
         console.log("file uploaded successfully");
       })
       .catch(() => console.log("File failed to upload!"));
 
-    await getDownloadURL(videoRef)
+    await getDownloadURL(videoRefFirebase)
       .then((url) => {
         setVideoUrl(url);
       })
@@ -130,21 +135,23 @@ const VideoRecorder: FC = () => {
   };
 
   useEffect(() => {
-    const temp = navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
-    });
-    temp
-      .then(() => {
-        console.log("Permissions given!");
-        setHavePermissions(true);
-      })
-      .catch(() => {
-        console.log("Permissions not given!");
-        setHavePermissions(false);
+    if (startRecorder) {
+      const temp = navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
       });
-  }, []);
-
+      temp
+        .then(() => {
+          console.log("Permissions given!");
+          setHavePermissions(true);
+        })
+        .catch(() => {
+          console.log("Permissions not given!");
+          setHavePermissions(false);
+        });
+    }
+  }, [startRecorder]);
+  console.log(previewVideo, mediaBlobUrl);
   return (
     <div className="app">
       {renderSwitch(status)}
@@ -157,13 +164,17 @@ const VideoRecorder: FC = () => {
         <>
           <div className="app-container">
             {previewVideo ? (
-              <video
-                className="app-video-feed"
-                height={HEIGHT}
-                width={WIDTH}
-                src={mediaBlobUrl}
-                controls
-              />
+              mediaBlobUrl ? (
+                <video
+                  className="app-video-feed"
+                  height={HEIGHT}
+                  width={WIDTH}
+                  src={mediaBlobUrl}
+                  controls
+                />
+              ) : (
+                <div style={{ width: WIDTH, height: HEIGHT }} />
+              )
             ) : (
               <Webcam
                 className="app-video-feed"
@@ -184,6 +195,7 @@ const VideoRecorder: FC = () => {
                       setStartRecorder(false);
                       setPreviewVideo(false);
                       setStopRecorder(false);
+                      clearBlobUrl();
                       resetTimer(undefined, false);
                     }}
                   >
@@ -213,7 +225,7 @@ const VideoRecorder: FC = () => {
               <Button
                 className="button-btn"
                 variant="contained"
-                disabled={!havePermissions}
+                disabled={!havePermissions && startRecorder}
                 onClick={handleStartRecording}
               >
                 Start
@@ -238,6 +250,7 @@ const VideoRecorder: FC = () => {
           selectedFile={videoUrl}
           setFileCheck={setVideoCheck}
           isVideo={true}
+          setPreviewFile={setPreviewVideo}
         />
       )}
     </div>

@@ -9,13 +9,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import { LinkedinShareButton, LinkedinIcon } from "react-share";
 import { BsSlack } from "react-icons/bs";
-import axios from "axios";
+import SlackShareDialog from "./SlackShareDialog";
 
 interface Props {
   fileCheck: boolean;
   selectedFile: string;
   setFileCheck: Dispatch<React.SetStateAction<boolean>>;
   isVideo: boolean;
+  setPreviewFile: Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -56,26 +57,15 @@ const CustomizedDialogs: FC<Props> = ({
   selectedFile,
   setFileCheck,
   isVideo,
+  setPreviewFile,
 }) => {
-  const [open, setOpen] = useState(fileCheck);
-
-  const handleSlackShare = async () => {
-    await axios
-      .get("http://localhost:8080/getFile", {
-        params: { imageUrl: selectedFile, isVideo },
-      })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err));
-
-    setOpen(false);
-    setFileCheck(false);
-  };
+  const [open, setOpen] = useState<boolean>(fileCheck);
+  const [slackShareOpen, setSlackShareOpen] = useState<boolean>(false);
 
   const handleClose = () => {
     setOpen(false);
     setFileCheck(false);
+    setPreviewFile(false);
   };
 
   return (
@@ -125,10 +115,24 @@ const CustomizedDialogs: FC<Props> = ({
             <LinkedinShareButton url={selectedFile}>
               <LinkedinIcon size={32} round />
             </LinkedinShareButton>
-            <BsSlack onClick={handleSlackShare} className="slack-btn" />
+            <BsSlack
+              onClick={() => setSlackShareOpen(true)}
+              className="slack-btn"
+            />
           </div>
         </DialogActions>
       </BootstrapDialog>
+      {slackShareOpen && (
+        <SlackShareDialog
+          selectedFile={selectedFile}
+          isVideo={isVideo}
+          setOpen={setOpen}
+          setFileCheck={setFileCheck}
+          setPreviewFile={setPreviewFile}
+          slackShareOpen={slackShareOpen}
+          setSlackShareOpen={setSlackShareOpen}
+        />
+      )}
     </div>
   );
 };

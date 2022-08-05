@@ -45,6 +45,9 @@
     
   }
   
+  .cam .cam-button-btn{
+    margin: 10px!important;
+  }
   .App .cam button,
   .app .app-input .button-btn,
   .app .button-btn{
@@ -75,12 +78,13 @@
   }
   
   .App .cam .camera-preview {
+    margin-top: 10px;
     border-radius: 5px;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-top: 65px;
+    padding-bottom: 65px;
     
       width: 500px;
-      height: 510px;
+      height: 500px;
       border: 1px solid #000;
   }
 

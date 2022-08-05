@@ -33,7 +33,6 @@ const Camera: FC = () => {
             const blob = xhr.response;
             console.log(blob);
           };
-          console.log(xhr);
           //xhr.open("GET", url);
           //xhr.send();
         })
@@ -43,7 +42,6 @@ const Camera: FC = () => {
         .finally(() => {
           setUploading(false);
           setPhotoCheck(true);
-          setImageClicked(false);
         });
     });
   };
@@ -63,14 +61,14 @@ const Camera: FC = () => {
             src={imageBlob}
           />
           <Button
-            className="button-btn"
+            className="cam-button-btn"
             variant="contained"
             onClick={uploadToFirebase}
           >
             Share
           </Button>
           <Button
-            className="button-btn"
+            className="cam-button-btn"
             variant="contained"
             onClick={() => setImageClicked(false)}
           >
@@ -105,6 +103,7 @@ const Camera: FC = () => {
           selectedFile={imageUrl}
           setFileCheck={setPhotoCheck}
           isVideo={false}
+          setPreviewFile={setImageClicked}
         />
       )}
     </div>
