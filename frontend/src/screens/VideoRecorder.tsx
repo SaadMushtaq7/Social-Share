@@ -55,9 +55,7 @@ const VideoRecorder: FC = () => {
       video: true,
       onStop: (blobUrl) => {
         let video = videoRef.current.video?.srcObject as MediaStream;
-        //video.getTracks()[0].stop();
-        const tracks = video.getTracks();
-        tracks.forEach((tracks) => tracks.stop());
+        video.getTracks()[0].stop();
         handleStopRecording(blobUrl);
       },
     });
@@ -95,6 +93,7 @@ const VideoRecorder: FC = () => {
       })
       .catch(() => console.log("failed to get url!"));
 
+    clearBlobUrl();
     setUploading(false);
     setVideoCheck(true);
   };
@@ -151,7 +150,7 @@ const VideoRecorder: FC = () => {
         });
     }
   }, [startRecorder]);
-  console.log(previewVideo, mediaBlobUrl);
+
   return (
     <div className="app">
       {renderSwitch(status)}

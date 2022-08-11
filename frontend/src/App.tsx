@@ -11,7 +11,6 @@ const App: FC = () => {
   return (
     <div className="App">
       <NavBar />
-
       <Routes>
         <Route path="/" element={<Camera />} />
         <Route path="/videoRecorder" element={<VideoRecorder />} />

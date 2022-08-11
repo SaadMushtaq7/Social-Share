@@ -65,7 +65,7 @@ const CustomizedDialogs: FC<Props> = ({
   const handleClose = () => {
     setOpen(false);
     setFileCheck(false);
-    setPreviewFile(false);
+    isVideo ? setPreviewFile(true) : setPreviewFile(false);
   };
 
   return (

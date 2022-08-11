@@ -12,44 +12,66 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const baseName = (str) => {
-  let base = new String(str).substring(str.lastIndexOf("/") + 1);
-  if (base.lastIndexOf(".") !== -1) {
-    base = base.substring(0, base.lastIndexOf("."));
-  }
-  return base;
-};
-
-const sendFileToSlack = async (localFilePath, message, channelId) => {
+const sendFileToSlack = async (localFilePath, message, channelId, isVideo) => {
   const client = new WebClient(process.env.REACT_APP_SLACK_SHARE_TOKEN, {
     logLevel: LogLevel.DEBUG,
   });
 
-  const base = baseName(localFilePath);
+  if (isVideo === "true") {
+    ffmpeg("downloads/videos/download.mp4")
+      .output("downloads/videos/downloadNew.mp4")
+      .videoCodec("libx264")
+      .size("1920x1080")
+      .on("progress", (progress) => {
+        console.log("...progress frame: ", progress.frames);
+      })
+      .on("error", (err) => {
+        console.log("error converting file: ", err);
+        return err;
+      })
+      .on("end", async () => {
+        await client.files
+          .upload({
+            channels: channelId,
+            initial_comment: message,
+            file: fs.createReadStream("downloads/videos/downloadNew.mp4"),
+            filename: "downloadNew",
+          })
+          .then((res) => {
+            console.log("file sent successfully!");
 
-  ffmpeg("download")
-    .output(baseName + "New.mp4")
-    .videoCodec("libx264")
-    .size("1280x720");
+            return res;
+          })
+          .catch((err) => {
+            console.log("failed to send");
+            return err;
+          })
+          .finally(() => {
+            fs.unlinkSync("downloads/vide/download.mp4");
+            fs.unlinkSync("downloads/videos/downloadNew.mp4");
+          });
+      })
+      .run();
+  } else {
+    await client.files
+      .upload({
+        channels: channelId,
+        initial_comment: message,
+        file: fs.createReadStream(localFilePath),
+      })
+      .then((res) => {
+        console.log("file sent successfully", res);
 
-  await client.files
-    .upload({
-      channels: channelId,
-      initial_comment: message,
-      file: fs.createReadStream(localFilePath),
-    })
-    .then((res) => {
-      console.log("file sent successfully", res);
-
-      return res;
-    })
-    .catch((err) => {
-      console.log("failed to send");
-      return err;
-    })
-    .finally(() => {
-      fs.unlinkSync(localFilePath);
-    });
+        return res;
+      })
+      .catch((err) => {
+        console.log("failed to send");
+        return err;
+      })
+      .finally(() => {
+        fs.unlinkSync(localFilePath);
+      });
+  }
 };
 
 //delete file and loader after sending and look at full flow
@@ -57,14 +79,24 @@ app.get("/getFile", async (req, res) => {
   let localFilePath;
 
   if (req.query.isVideo === "true") {
-    localFilePath = path.resolve(
-      __dirname,
-      "downloads/videos",
-      "downloadNew.mp4"
-    );
+    localFilePath = path.resolve(__dirname, "downloads/videos", "download.mp4");
   } else if (req.query.isVideo === "false") {
     localFilePath = path.resolve(__dirname, "downloads/photos", "download.jpg");
   }
+  ffmpeg("downloads/videos/download.mp4")
+    .output("downloads/videos/downloadNew.mov")
+    .videoCodec("libx264")
+    .size("1920x1080")
+    .on("progress", (progress) => {
+      console.log("...progress frame: ", progress.frames);
+    })
+    .on("error", (err) => {
+      console.log("error converting file: ", err);
+    })
+    .on("end", (res) => {
+      console.log("conversion ended: ", res);
+    })
+    .run();
 
   await axios({
     url: req.query.fileUrl,
@@ -74,7 +106,7 @@ app.get("/getFile", async (req, res) => {
     .then((response) => {
       const url = response.data.pipe(fs.createWriteStream(localFilePath));
       url.on("finish", () => {
-        console.log("download successfully!");
+        console.log("file downloaded successfully!");
         const responseFinal = sendFileToSlack(
           localFilePath,
           req.query.message,

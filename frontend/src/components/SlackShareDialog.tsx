@@ -45,10 +45,10 @@ const SlackShareDialog: FC<Props> = ({
         },
       })
       .then((res) => {
-        console.log(res.data);
+        console.log(res);
         setOpen(false);
         setFileCheck(false);
-        setPreviewFile(false);
+        isVideo ? setPreviewFile(true) : setPreviewFile(false);
       })
       .catch((err) => console.log(err))
       .finally(() => {
